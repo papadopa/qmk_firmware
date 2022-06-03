@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef RGBLIGHT_ENABLE
 
+/* Disable effects for now, not really needed and they take space
 #   define RGBLIGHT_EFFECT_BREATHING
 #   define RGBLIGHT_EFFECT_RAINBOW_MOOD
 #   define RGBLIGHT_EFFECT_RAINBOW_SWIRL
@@ -37,10 +38,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #   define RGBLIGHT_EFFECT_RGB_TEST
 #   define RGBLIGHT_EFFECT_ALTERNATING
 #   define RGBLIGHT_EFFECT_TWINKLE
+*/
 
 #   define RGBLED_NUM 54
 #   define RGBLED_SPLIT \
         { 27, 27 }
+#   define RGBLIGHT_SLEEP /* turn off lights on sleep */
 #endif
 
 #ifdef RGB_MATRIX_ENABLE
