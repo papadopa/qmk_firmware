@@ -233,19 +233,22 @@ static bool autoshift_press(uint16_t keycode, uint16_t now, keyrecord_t *record)
  * Called on key down with keycode=KC_NO, auto-shifted key up, and timeout.
  */
 static void autoshift_end(uint16_t keycode, uint16_t now, bool matrix_trigger, keyrecord_t *record) {
+#    ifdef AUTO_SHIFT_TIMEOUT_PER_KEY
+    uint16_t timeout = get_autoshift_timeout(autoshift_lastkey, record);
+#    else
+    uint16_t timeout = autoshift_timeout;
+#    endif
     if (autoshift_flags.in_progress && (keycode == autoshift_lastkey || keycode == KC_NO)) {
         // Process the auto-shiftable key.
         autoshift_flags.in_progress = false;
         // clang-format off
         autoshift_flags.lastshifted =
             autoshift_flags.lastshifted
-            || TIMER_DIFF_16(now, autoshift_time) >=
-#    ifdef AUTO_SHIFT_TIMEOUT_PER_KEY
-                get_autoshift_timeout(autoshift_lastkey, record)
-#    else
-                autoshift_timeout
+            || (TIMER_DIFF_16(now, autoshift_time) >= timeout && !matrix_trigger);
+
+#    ifdef AUTO_SHIFT_REPEAT_LOWERCASE
+	
 #    endif
-        ;
         // clang-format on
         set_autoshift_shift_state(autoshift_lastkey, autoshift_flags.lastshifted);
         if (get_mods() & MOD_BIT(KC_LSFT)) {
@@ -300,15 +303,16 @@ static void autoshift_end(uint16_t keycode, uint16_t now, bool matrix_trigger, k
  *  to be released.
  */
 void autoshift_matrix_scan(void) {
+#    ifdef AUTO_SHIFT_TIMEOUT_PER_KEY
+     const uint16_t timeout = get_autoshift_timeout(autoshift_lastkey, &autoshift_lastrecord);
+#    else
+     const uint16_t timeout = autoshift_timeout;
+#    endif
+     
     if (autoshift_flags.in_progress) {
         const uint16_t now = timer_read();
-        if (TIMER_DIFF_16(now, autoshift_time) >=
-#    ifdef AUTO_SHIFT_TIMEOUT_PER_KEY
-            get_autoshift_timeout(autoshift_lastkey, &autoshift_lastrecord)
-#    else
-            autoshift_timeout
-#    endif
-        ) {
+	const uint16_t timediff = TIMER_DIFF_16(now, autoshift_time);
+        if (timediff >= 4 * timeout) {
             autoshift_end(autoshift_lastkey, now, true, &autoshift_lastrecord);
         }
     }
