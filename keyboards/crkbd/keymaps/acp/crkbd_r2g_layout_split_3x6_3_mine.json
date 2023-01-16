@@ -48,7 +48,7 @@
       "LALT_T(KC_SPC)",
       "KC_ENT",
       "OSL(2)",
-      "ANY(LALT_T(OSM(MOD_RALT)))"
+      "RALT_T(KC_BSPC)"
     ],
     [
       "KC_TRNS",
