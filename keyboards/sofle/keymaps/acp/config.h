@@ -47,7 +47,7 @@ for more options.
     #undef TAPPING_TERM
     #define TAPPING_TERM 200
 #endif
-#define ENCODER_DIRECTION_FLIP
+//#define ENCODER_DIRECTION_FLIP
 
 
 #define RGBLIGHT_SLEEP
