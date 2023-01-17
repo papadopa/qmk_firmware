@@ -23,16 +23,50 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
 
+
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case LALT_T(OSM(MOD_RALT)):
-            if (record->tap.count && record->event.pressed) {
-		set_oneshot_mods(MOD_BIT(KC_RALT));
-                return false;        // Return false to ignore further processing of key
-            }
-            break;
-    }
-    return true;
+   switch (keycode) {
+      case LALT_T(OSM(MOD_RALT)):
+	 if (record->tap.count && record->event.pressed) {
+	    set_oneshot_mods(MOD_BIT(KC_RALT));
+	    return false;        // Return false to ignore further processing of key
+	 }
+	 break;
+      case KC_A:
+      case KC_U:
+      case KC_I:
+      case KC_QUOT:
+	 /*
+	  * Replace default AltGr + A -> Á -> À
+	  *                         U -> Ú -> Ù
+	  *                         I -> Í -> È
+	  * For AltGr + ' => `
+	  */
+	 if (record->event.pressed) {
+	    if (get_mods() & MOD_BIT(KC_RALT)) {
+	       uint8_t _kc_new = (keycode == KC_I) ? KC_E : keycode;
+	       uint8_t _mods_tmp = get_mods();
+	       if (_mods_tmp & MOD_MASK_SHIFT) {
+		  set_mods(_mods_tmp & MOD_BIT(KC_RALT));  // only AltGr
+		  tap_code(KC_GRV);
+		  clear_mods(); // AltGr + Shift
+		  set_mods(_mods_tmp & MOD_MASK_SHIFT); // only LSFT|RSFT
+	       } else {
+		  tap_code(KC_GRV);
+		  clear_mods(); // AltGr
+	       }
+	       if (keycode != KC_QUOT) {
+		  tap_code(_kc_new); // -> à/ù/è
+	       }
+	       set_mods(_mods_tmp); // restore mods for next keypress
+	       return false;
+	    }
+	    // if no RALT -> process normally (-> return true)
+	 }
+	 break;
+   }
+   return true;
 }
 
 // qk_tap_dance_action_t tap_dance_actions[] = {

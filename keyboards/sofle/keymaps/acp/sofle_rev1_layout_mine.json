@@ -61,11 +61,11 @@
       "KC_LALT",
       "KC_LCTL",
       "OSL(1)",
-      "KC_SPC",
+      "LALT_T(KC_SPC)",
       "KC_ENT",
       "OSL(2)",
       "KC_RCTL",
-      "ANY(LALT_T(OSM(MOD_RALT)))",
+      "RALT_T(KC_BSPC)",
       "KC_RGUI"
     ],
     [
