@@ -79,9 +79,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
         }
     } else if (index == 1) {
         if (clockwise) {
-            tap_code(KC_WH_D);
+            tap_code(KC_MEDIA_NEXT_TRACK);
         } else {
-            tap_code(KC_WH_U);
+            tap_code(KC_MEDIA_PREV_TRACK);
         }
     }
     return true;
@@ -100,24 +100,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case KC_A:
       case KC_U:
       case KC_I:
+      case KC_O:
       case KC_QUOT:
 	 /*
 	  * Replace default AltGr + A -> Á -> À
 	  *                         U -> Ú -> Ù
 	  *                         I -> Í -> È
+	  *                         O -> Ó -> Ô 
 	  * For AltGr + ' => `
 	  */
 	 if (record->event.pressed) {
 	    if (get_mods() & MOD_BIT(KC_RALT)) {
 	       uint8_t _kc_new = (keycode == KC_I) ? KC_E : keycode;
+	       uint8_t _kc_accent = (keycode == KC_O) ? KC_CIRC : KC_GRV;
 	       uint8_t _mods_tmp = get_mods();
 	       if (_mods_tmp & MOD_MASK_SHIFT) {
 		  set_mods(_mods_tmp & MOD_BIT(KC_RALT));  // only AltGr
-		  tap_code(KC_GRV);
+		  tap_code(_kc_accent);
 		  clear_mods(); // AltGr + Shift
 		  set_mods(_mods_tmp & MOD_MASK_SHIFT); // only LSFT|RSFT
 	       } else {
-		  tap_code(KC_GRV);
+		  tap_code(_kc_accent);
 		  clear_mods(); // AltGr
 	       }
 	       if (keycode != KC_QUOT) {
